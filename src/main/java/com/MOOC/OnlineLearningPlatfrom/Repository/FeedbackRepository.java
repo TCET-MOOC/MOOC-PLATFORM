@@ -1,6 +1,6 @@
 package com.MOOC.OnlineLearningPlatfrom.Repository;
 
-import com.example.demo.entity.Feedback;
+import com.MOOC.OnlineLearningPlatfrom.Entity.Feedback;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

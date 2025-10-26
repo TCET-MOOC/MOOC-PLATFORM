@@ -1,6 +1,6 @@
 package com.MOOC.OnlineLearningPlatfrom.Repository;
 
-import com.example.demo.entity.LeaderBoard;
+import com.MOOC.OnlineLearningPlatfrom.Entity.LeaderBoard;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

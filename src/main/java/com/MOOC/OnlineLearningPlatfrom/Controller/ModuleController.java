@@ -1,7 +1,7 @@
 package com.MOOC.OnlineLearningPlatfrom.Controller;
 
-import com.example.demo.entity.Module;
-import com.example.demo.repository.ModuleRepository;
+import com.MOOC.OnlineLearningPlatfrom.Entity.Module;
+import com.MOOC.OnlineLearningPlatfrom.Repository.ModuleRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

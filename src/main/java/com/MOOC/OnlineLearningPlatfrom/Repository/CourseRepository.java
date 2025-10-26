@@ -1,6 +1,6 @@
 package com.MOOC.OnlineLearningPlatfrom.Repository;
 
-import com.example.demo.entity.Course;
+import com.MOOC.OnlineLearningPlatfrom.Entity.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 // Repository interface for Course entity

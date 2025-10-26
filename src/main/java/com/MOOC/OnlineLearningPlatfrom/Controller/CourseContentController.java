@@ -1,7 +1,10 @@
 package com.MOOC.OnlineLearningPlatfrom.Controller;
 
-import com.example.demo.entity.CourseContent;
-import com.example.demo.repository.CourseContentRepository;
+// --- ADDED/CHANGED IMPORTS ---
+import com.MOOC.OnlineLearningPlatfrom.Entity.CourseContent;
+import com.MOOC.OnlineLearningPlatfrom.Service.CourseContentService; // Import the service
+// --- END ---
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,35 +14,50 @@ import java.util.List;
 @RequestMapping("/api/contents") // Base path for all CourseContent APIs
 public class CourseContentController {
 
-    private final CourseContentRepository contentRepo; // DB access layer
+    // --- Inject the Service ---
+    private final CourseContentService contentService;
 
-    // Constructor Injection for repository
-    public CourseContentController(CourseContentRepository contentRepo) {
-        this.contentRepo = contentRepo;
+    // --- Constructor Injection for the Service ---
+    public CourseContentController(CourseContentService contentService) {
+        this.contentService = contentService;
     }
 
     @GetMapping // GET -> fetch all contents
     public List<CourseContent> getAllContents() {
-        return contentRepo.findAll();
+        // --- Call the service ---
+        return contentService.getAllContents();
+    }
+
+    // --- ADDED: Get by ID endpoint ---
+    @GetMapping("/{id}")
+    public ResponseEntity<CourseContent> getContentById(@PathVariable Long id) {
+        return contentService.getContentById(id)
+                .map(ResponseEntity::ok) // 200 OK
+                .orElse(ResponseEntity.notFound().build()); // 404 Not Found
     }
 
     @PostMapping // POST -> add new content
     public CourseContent createContent(@RequestBody CourseContent content) {
-        return contentRepo.save(content);
+        // --- Call the service ---
+        return contentService.createContent(content);
     }
 
     @PutMapping("/{id}") // PUT -> update existing content by ID
     public ResponseEntity<CourseContent> updateContent(@PathVariable Long id, @RequestBody CourseContent contentDetails) {
-        return contentRepo.findById(id).map(content -> {
-            // update fields
-            content.setTitle(contentDetails.getTitle());              // update title  
-            content.setContentType(contentDetails.getContentType());  // update type (video/pdf etc.)  
-            content.setFilePath(contentDetails.getFilePath());        // update file path/location  
-            content.setDurationSeconds(contentDetails.getDurationSeconds()); // update duration in seconds  
-            content.setPosition(contentDetails.getPosition());        // update order/position in course  
+        // --- Call the service and map the Optional response ---
+        return contentService.updateContent(id, contentDetails)
+                .map(ResponseEntity::ok) // 200 OK
+                .orElse(ResponseEntity.notFound().build()); // 404 Not Found
+    }
 
-            
-            return ResponseEntity.ok(contentRepo.save(content)); // save updated content
-        }).orElse(ResponseEntity.notFound().build()); // if not found return 404
+    // --- ADDED: Delete endpoint ---
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteContent(@PathVariable Long id) {
+        try {
+            contentService.deleteContent(id);
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        }
     }
 }

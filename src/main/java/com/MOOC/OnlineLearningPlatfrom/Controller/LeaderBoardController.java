@@ -1,7 +1,7 @@
 package com.MOOC.OnlineLearningPlatfrom.Controller;
 
-import com.example.demo.entity.LeaderBoard;
-import com.example.demo.repository.LeaderBoardRepository;
+import com.MOOC.OnlineLearningPlatfrom.Entity.LeaderBoard;
+import com.MOOC.OnlineLearningPlatfrom.Repository.LeaderBoardRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

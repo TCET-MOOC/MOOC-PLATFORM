@@ -1,50 +1,65 @@
 package com.MOOC.OnlineLearningPlatfrom.Controller;
 
-import com.example.demo.entity.Course;
-import com.example.demo.repository.CourseRepository;
+// --- IMPORT YOUR NEW SERVICE ---
+import com.MOOC.OnlineLearningPlatfrom.Service.CourseService; 
+// --- NO LONGER NEED REPOSITORY IMPORTS ---
+import com.MOOC.OnlineLearningPlatfrom.Entity.Course;
+// --- You might still need Module imports if you add module methods ---
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/courses") // Base API path for courses
+@RequestMapping("/api/courses")
 public class CourseController {
 
-    private final CourseRepository courseRepo; // Repository for DB operations
+    // --- Inject the SERVICE, not the Repository ---
+    private final CourseService courseService;
 
-    // Constructor injection for repository
-    public CourseController(CourseRepository courseRepo) {
-        this.courseRepo = courseRepo;
+    // --- Constructor injection for the SERVICE ---
+    public CourseController(CourseService courseService) {
+        this.courseService = courseService;
     }
 
     @GetMapping // GET -> fetch all courses
     public List<Course> getAllCourses() {
-        return courseRepo.findAll(); // return all courses from DB
+        // --- Call the service ---
+        return courseService.getAllCourses(); 
     }
 
     @GetMapping("/{id}") // GET -> fetch course by ID
     public ResponseEntity<Course> getCourse(@PathVariable Long id) {
-        return courseRepo.findById(id)
-                .map(ResponseEntity::ok) // return course if found
-                .orElse(ResponseEntity.notFound().build()); // else return 404
+        // --- The controller maps the Optional to a Response ---
+        return courseService.getCourseById(id)
+                .map(ResponseEntity::ok) // 200 OK
+                .orElse(ResponseEntity.notFound().build()); // 404 Not Found
     }
 
     @PostMapping // POST -> add new course
     public Course createCourse(@RequestBody Course course) {
-        return courseRepo.save(course); // save new course in DB
+        // --- Call the service ---
+        return courseService.createCourse(course); 
     }
 
     @PutMapping("/{id}") // PUT -> update existing course by ID
     public ResponseEntity<Course> updateCourse(@PathVariable Long id, @RequestBody Course courseDetails) {
-        return courseRepo.findById(id).map(course -> {
-            // update fields
-            course.setTitle(courseDetails.getTitle());           // update title
-            course.setDescription(courseDetails.getDescription()); // update description
-            course.setDepartmentId(courseDetails.getDepartmentId()); // update department
-            course.setCreatorId(courseDetails.getCreatorId());   // update creator
-
-            return ResponseEntity.ok(courseRepo.save(course)); // save and return updated course
-        }).orElse(ResponseEntity.notFound().build()); // return 404 if course not found
+        // --- The controller maps the Optional to a Response ---
+        return courseService.updateCourse(id, courseDetails)
+                .map(ResponseEntity::ok) // 200 OK
+                .orElse(ResponseEntity.notFound().build()); // 404 Not Found
+    }
+    
+    // --- You should also add a DELETE endpoint ---
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
+        try {
+            courseService.deleteCourse(id);
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } catch (Exception e) {
+            // This catches the "Not Found" exception from the service
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        }
     }
 }
